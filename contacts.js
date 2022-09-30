@@ -1,26 +1,48 @@
 const fs = require("fs/promises");
 const path = require("path");
+const { v4: uuidv4, v4 } = require("uuid");
 
 const contactsPath = path.join(__dirname, "db", "contacts.json");
 
-console.log("__dirname CONTACTS.js", contactsPath);
+async function listContacts() {
+  const data = await fs.readFile(contactsPath);
+  const products = JSON.parse(data);
 
-// TODO: задокументувати кожну функцію
-function listContacts() {
-  return 555555555555555555;
-  // ...твій код
+  return products;
 }
 
-function getContactById(contactId) {
-  // ...твій код
+async function getContactById(contactId) {
+  const products = await listContacts();
+
+  const result = products.find((contact) => contact.id === `${contactId}`);
+
+  if (!result) {
+    return null;
+  }
+
+  return result;
 }
 
-function removeContact(contactId) {
-  // ...твій код
+async function removeContact(contactId) {
+  const products = await listContacts();
+
+  const newListContacts = products.filter(
+    (contact) => contact.id !== `${contactId}`
+  );
+  await fs.writeFile(contactsPath, JSON.stringify(newListContacts));
+
+  return newListContacts;
 }
 
-function addContact(name, email, phone) {
-  // ...твій код
+async function addContact(name, email, phone) {
+  const products = await listContacts();
+
+  const newPoduct = { id: v4(), name, email, phone };
+  products.push(newPoduct);
+
+  await fs.writeFile(contactsPath, JSON.stringify(products));
+
+  return newPoduct;
 }
 
 module.exports = {

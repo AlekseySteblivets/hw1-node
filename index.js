@@ -1,34 +1,47 @@
 const fs = require("fs/promises");
-const { listContacts, getContactById } = require("./contacts");
-console.log("listContacts", listContacts());
+const {
+  listContacts,
+  getContactById,
+  addContact,
+  removeContact,
+} = require("./contacts");
 
-// const fileOperation = async (filePath, action = "read", data = "") => {
-//   switch (action) {
-//     case "read":
-//       const text = await fs.readFile(filePath, "utf-8");
-//       console.log("text:", text);
-//       break;
+const yargs = require("yargs");
+const { hideBin } = require("yargs/helpers");
+const arr = hideBin(process.argv);
+console.log("arr:", arr);
+const { argv } = yargs(arr);
+console.log("argv:", argv);
 
-//     case "add":
-//       await fs.appendFile(filePath, data);
-//       break;
+async function invokeAction({ action, id, name, email, phone }) {
+  switch (action) {
+    case "list":
+      const products = await listContacts();
+      console.log("products:", products);
+      break;
 
-//     case "replace":
-//       await fs.writeFile(filePath, data);
-//       break;
+    case "get":
+      const product = await getContactById(id);
+      if (!product) {
+        throw new Error(`Product with id=${id} not found`);
+      }
+      console.log("product:", product);
+      break;
 
-//     default:
-//       console.log("Unknown acti");
-//   }
-// };
-// fileOperation("db/testText.txt", "read", "\nfore, five.");
+    case "add":
+      const newProduct = await addContact(name, email, phone);
+      console.log("newProduct:", newProduct);
+      break;
 
-// fs.readFile("./contacts.js", "utf-8")
-//   .then((data) => {
-//     console.log(data);
-//   })
-//   .catch((err) => console.log(err.message));
+    case "remove":
+      const removeProduct = await removeContact(id);
+      console.log("removeProduct:", removeProduct);
+      break;
 
-// console.log("process.argv[1]:", process.argv[1]);
+    default:
+      console.warn("\x1B[31m Unknown action type!");
+  }
+}
+// invokeAction({ action: "get", id: "1" });
 
-// console.log("__dirname - index.js:", __dirname);
+invokeAction(argv);
