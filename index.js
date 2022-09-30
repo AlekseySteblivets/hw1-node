@@ -9,9 +9,7 @@ const {
 const yargs = require("yargs");
 const { hideBin } = require("yargs/helpers");
 const arr = hideBin(process.argv);
-console.log("arr:", arr);
 const { argv } = yargs(arr);
-console.log("argv:", argv);
 
 async function invokeAction({ action, id, name, email, phone }) {
   switch (action) {
